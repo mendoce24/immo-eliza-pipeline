@@ -5,6 +5,7 @@ on: push
 
 jobs:
   build-test-push:
+    if: ${{ !github.event.act }} # skip during local actions testing
     runs-on: ubuntu-latest
     steps:
     - name: github checkout
