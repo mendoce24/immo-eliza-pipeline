@@ -24,5 +24,6 @@ jobs:
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
     - name: Push Docker image
-      run: docker tag myimage:${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }}/myimage:${{ github.sha }}
-           docker push ${{ secrets.DOCKERHUB_USERNAME }}/myimage:${{ github.sha }
+      run: |
+        docker tag myimage:${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }}/myimage:${{ github.sha }}
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/myimage:${{ github.sha }
