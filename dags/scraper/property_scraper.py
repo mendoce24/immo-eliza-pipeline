@@ -146,24 +146,24 @@ def scrape_from_txt():
     return property_data
 
 
-def save_to_json(data):
+def save_to_json(data, processDate):
     """
     Save scraped property data into a json file.
 
     @param data (dict): dictionary containing property data.
     """
-    file_name = "properties_data.json"
+    file_name = "properties_data_{processDate}.json"
     file_path = "/tmp/" + file_name
     with open(file_path, "w", encoding="utf-8") as json_file:
         json.dump(data, json_file, ensure_ascii=False, indent=4)
 
 
-def property_scraper():
+def property_scraper(processDate):
     """
     Main function to scrape property data and save it into a json file.
     """
     start = time.time()
     immo_data = scrape_from_txt()
-    save_to_json(immo_data)
+    save_to_json(immo_data, processDate)
     end = time.time()
     print("Time taken to scrape listings: {:.6f}s".format(end-start))
