@@ -1,29 +1,31 @@
-# Pipeline name
-name: CI/CD Pipeline
-# Triggers the pipeline on push
-on: push
+name: ci
+
+on:
+  push:
+    branches:
+      - "main"
 
 jobs:
-  build-test-push:
-    if: ${{ !github.event.act }} # skip during local actions testing
+  build:
     runs-on: ubuntu-latest
     steps:
-    - name: github checkout
-      uses: actions/checkout@v2
-
-    - name: Build Docker image
-      run: docker build -t myimage:${{ github.sha }} .
-
-    - name: Run unittests
-      run: docker run myimage:${{ github.sha }} python -m pytest .
-
-    - name: Log in to Docker Hub
-      if: ${{ success() }}
-      uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_PASSWORD }}
-
-    - name: Push Docker image
-      run: docker tag myimage:${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }}/myimage:${{ github.sha }}
-           docker push ${{ secrets.DOCKERHUB_USERNAME }}/myimage:${{ github.sha }
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      -
+        name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/clockbox:latest
